@@ -1,16 +1,12 @@
 //AIM: To write a c program for insertion,deletion and display using doubly linked list
 #include <stdio.h>
 #include <stdlib.h>
-
 struct Node {
     int data;
     struct Node* prev;
     struct Node* next;
 };
-
 struct Node* head = NULL;
-
-// Create new node
 struct Node* createNode(int value) {
     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
     newNode->data = value;
@@ -18,8 +14,6 @@ struct Node* createNode(int value) {
     newNode->next = NULL;
     return newNode;
 }
-
-// Insert at beginning
 void insertBegin(int value) {
     struct Node* newNode = createNode(value);
 
@@ -32,8 +26,6 @@ void insertBegin(int value) {
     }
     printf("Inserted at beginning.\n");
 }
-
-// Insert at end
 void insertEnd(int value) {
     struct Node* newNode = createNode(value);
 
@@ -51,8 +43,6 @@ void insertEnd(int value) {
     newNode->prev = temp;
     printf("Inserted at end.\n");
 }
-
-// Insert at position
 void insertPos(int value, int pos) {
     struct Node* newNode = createNode(value);
 
@@ -81,8 +71,6 @@ void insertPos(int value, int pos) {
 
     printf("Inserted at position %d.\n", pos);
 }
-
-// Delete at beginning
 void deleteBegin() {
     if (head == NULL) {
         printf("List is empty!\n");
@@ -101,8 +89,6 @@ void deleteBegin() {
     free(temp);
     printf("Deleted from beginning.\n");
 }
-
-// Delete at end
 void deleteEnd() {
     if (head == NULL) {
         printf("List is empty!\n");
@@ -110,8 +96,6 @@ void deleteEnd() {
     }
 
     struct Node* temp = head;
-
-    // Only one node
     if (temp->next == NULL) {
         head = NULL;
         free(temp);
@@ -126,8 +110,6 @@ void deleteEnd() {
     free(temp);
     printf("Deleted from end.\n");
 }
-
-// Delete at position
 void deletePos(int pos) {
     if (head == NULL) {
         printf("List is empty!\n");
@@ -157,8 +139,6 @@ void deletePos(int pos) {
     free(temp);
     printf("Deleted position %d.\n", pos);
 }
-
-// Display forward
 void displayForward() {
     if (head == NULL) {
         printf("List is empty!\n");
@@ -173,8 +153,6 @@ void displayForward() {
     }
     printf("NULL\n");
 }
-
-// Display backward
 void displayBackward() {
     if (head == NULL) {
         printf("List is empty!\n");
