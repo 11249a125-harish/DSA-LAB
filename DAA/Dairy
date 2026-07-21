@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pillai's Dairy — Fresh from the village, twice a day</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sky-ink:#1b2a44;
+    --sky-deep:#101a30;
+    --milk:#faf7ef;
+    --milk-dim:#efe9db;
+    --turmeric:#e3a008;
+    --clay:#a6492a;
+    --leaf:#465e3b;
+    --text-on-milk:#211c14;
+    --text-dim:#5c5445;
+    --line: rgba(33,28,20,0.12);
+    --radius: 2px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--milk);
+    color:var(--text-on-milk);
+    font-family:'Work Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important;}
+  }
+
+  h1,h2,h3{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    letter-spacing:-0.01em;
+    line-height:1.05;
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--clay);
+  }
+  a{color:inherit;}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(250,247,239,0.92);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  nav .wrap{
+    display:flex; align-items:center; justify-content:space-between;
+    height:68px;
+  }
+  .brand{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:1.15rem;
+  }
+  .brand span{color:var(--clay);}
+  .navlinks{display:flex; gap:32px; font-size:0.9rem;}
+  .navlinks a{text-decoration:none; color:var(--text-dim); transition:color 0.2s;}
+  .navlinks a:hover, .navlinks a:focus-visible{color:var(--clay);}
+  .navlinks a:focus-visible{outline:2px solid var(--clay); outline-offset:4px;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    min-height:92vh;
+    display:flex; align-items:flex-end;
+    background:linear-gradient(180deg, var(--sky-deep) 0%, var(--sky-ink) 38%, #3c4a5e 62%, #cf8b52 82%, #f2c879 100%);
+    overflow:hidden;
+    color:var(--milk);
+  }
+  .stars{
+    position:absolute; inset:0 0 55% 0;
+    background-image:
+      radial-gradient(1px 1px at 8% 15%, rgba(255,255,255,0.8), transparent),
+      radial-gradient(1px 1px at 22% 30%, rgba(255,255,255,0.6), transparent),
+      radial-gradient(1.5px 1.5px at 40% 10%, rgba(255,255,255,0.9), transparent),
+      radial-gradient(1px 1px at 60% 22%, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1px 1px at 75% 8%, rgba(255,255,255,0.7), transparent),
+      radial-gradient(1.5px 1.5px at 88% 25%, rgba(255,255,255,0.6), transparent),
+      radial-gradient(1px 1px at 95% 12%, rgba(255,255,255,0.5), transparent);
+    animation: twinkle 6s ease-in-out infinite;
+  }
+  @keyframes twinkle{ 0%,100%{opacity:1;} 50%{opacity:0.55;} }
+
+  .sun{
+    position:absolute;
+    width:120px; height:120px; border-radius:50%;
+    left:50%; bottom:-40px; transform:translateX(-50%);
+    background:radial-gradient(circle at 40% 35%, #fff2cf, var(--turmeric) 60%, #c97a12 100%);
+    box-shadow:0 0 80px 20px rgba(227,160,8,0.45);
+    animation: rise 3.2s cubic-bezier(.2,.7,.2,1) 0.3s both;
+  }
+  @keyframes rise{ from{ bottom:-140px; opacity:0;} to{ bottom:-40px; opacity:1;} }
+
+  .hero-content{
+    position:relative; z-index:2;
+    width:100%;
+    padding-bottom:72px;
+  }
+  .hero .eyebrow{color:#f4d9a6;}
+  .hero h1{
+    font-size:clamp(2.6rem, 6vw, 5rem);
+    max-width:14ch;
+    margin:14px 0 22px;
+    text-shadow:0 2px 24px rgba(0,0,0,0.25);
+  }
+  .hero p.lede{
+    max-width:46ch;
+    font-size:1.08rem;
+    line-height:1.55;
+    color:#f2ecd8;
+  }
+  .hero-actions{display:flex; gap:16px; margin-top:34px; flex-wrap:wrap;}
+  .btn{
+    font-family:'Work Sans', sans-serif;
+    font-weight:600;
+    font-size:0.92rem;
+    padding:14px 26px;
+    border-radius:var(--radius);
+    border:1px solid transparent;
+    cursor:pointer;
+    text-decoration:none;
+    display:inline-block;
+    transition:transform 0.15s ease, background 0.2s ease;
+  }
+  .btn:focus-visible{outline:2px solid var(--milk); outline-offset:3px;}
+  .btn-primary{background:var(--milk); color:var(--sky-deep);}
+  .btn-primary:hover{transform:translateY(-2px); background:#fff;}
+  .btn-ghost{border-color:rgba(250,247,239,0.5); color:var(--milk);}
+  .btn-ghost:hover{background:rgba(250,247,239,0.12); transform:translateY(-2px);}
+
+  /* ---------- SECTION GENERIC ---------- */
+  section{padding:96px 0;}
+  .section-head{max-width:640px; margin-bottom:56px;}
+  .section-head h2{font-size:clamp(1.8rem,3.4vw,2.6rem); margin-top:10px;}
+  .section-head p{color:var(--text-dim); margin-top:14px; font-size:1.02rem; line-height:1.6;}
+
+  /* ---------- STORY ---------- */
+  .story{background:var(--milk);}
+  .story-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:center;
+  }
+  .story-figure{
+    aspect-ratio:4/5;
+    background:
+      linear-gradient(160deg, var(--leaf) 0%, #2f4027 100%);
+    border-radius:var(--radius);
+    position:relative;
+    overflow:hidden;
+  }
+  .story-figure::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image: repeating-linear-gradient(115deg, rgba(255,255,255,0.05) 0 2px, transparent 2px 22px);
+  }
+  .ring{
+    position:absolute; border-radius:50%; border:1px solid rgba(250,247,239,0.35);
+  }
+  .ring.r1{width:70%; height:70%; top:15%; left:15%;}
+  .ring.r2{width:44%; height:44%; top:28%; left:28%; border-color:rgba(227,160,8,0.6);}
+  .story-figure .cap{
+    position:absolute; bottom:24px; left:24px; right:24px;
+    color:var(--milk); font-family:'JetBrains Mono', monospace; font-size:0.75rem; letter-spacing:0.06em;
+  }
+  .story-copy p{color:var(--text-dim); line-height:1.7; margin-bottom:18px; font-size:1.02rem;}
+  .story-copy p strong{color:var(--text-on-milk);}
+
+  /* ---------- TIMELINE (real sequence: two collection times a day) ---------- */
+  .timeline-section{background:var(--sky-deep); color:var(--milk);}
+  .timeline-section .eyebrow{color:#e3a008;}
+  .timeline-section .section-head p{color:#c7c2b0;}
+  .timeline{
+    display:grid; grid-template-columns:repeat(4, 1fr); gap:1px;
+    background:rgba(250,247,239,0.14);
+    border:1px solid rgba(250,247,239,0.14);
+  }
+  .tl-item{
+    background:var(--sky-deep);
+    padding:32px 26px;
+  }
+  .tl-time{
+    font-family:'JetBrains Mono', monospace;
+    font-size:1.5rem;
+    color:var(--turmeric);
+  }
+  .tl-item h3{font-size:1.05rem; margin:14px 0 8px; font-weight:600;}
+  .tl-item p{font-size:0.9rem; color:#b9b4a4; line-height:1.55;}
+
+  /* ---------- PRODUCTS ---------- */
+  .products{background:var(--milk-dim);}
+  .product-grid{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+  }
+  .product-card{
+    background:var(--milk);
+    padding:34px 28px;
+    min-height:280px;
+    display:flex; flex-direction:column; justify-content:space-between;
+    transition:background 0.2s ease;
+  }
+  .product-card:hover{background:#fff;}
+  .p-mark{
+    width:38px; height:38px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono', monospace; font-size:0.75rem;
+    border:1px solid var(--clay); color:var(--clay);
+  }
+  .product-card h3{font-size:1.2rem; margin-top:22px;}
+  .product-card p{color:var(--text-dim); font-size:0.9rem; margin-top:8px; line-height:1.5;}
+  .p-stat{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.78rem;
+    color:var(--leaf);
+    margin-top:18px;
+    padding-top:14px;
+    border-top:1px dashed var(--line);
+  }
+
+  /* ---------- QUALITY / JAR ---------- */
+  .quality{background:var(--milk);}
+  .quality-grid{display:grid; grid-template-columns:0.9fr 1.1fr; gap:72px; align-items:center;}
+  .jar-wrap{display:flex; justify-content:center;}
+  .jar{
+    width:150px; height:210px; position:relative;
+    border:2px solid var(--text-on-milk);
+    border-top:none;
+    border-radius:0 0 14px 14px;
+  }
+  .jar::before{
+    content:"";
+    position:absolute; top:-14px; left:-8px; right:-8px; height:14px;
+    border:2px solid var(--text-on-milk); border-bottom:none;
+    border-radius:4px 4px 0 0;
+  }
+  .jar-fill{
+    position:absolute; left:0; right:0; bottom:0;
+    background:linear-gradient(180deg, #fffdf6, #f2ead2);
+    height:0%;
+    animation: fillup 2.4s cubic-bezier(.2,.8,.2,1) 0.4s forwards;
+  }
+  @keyframes fillup{ to{ height:88%; } }
+  .jar-fill::after{
+    content:"";
+    position:absolute; top:0; left:0; right:0; height:14px;
+    background:linear-gradient(180deg, #e3c98a, transparent);
+    opacity:0.8;
+  }
+  .jar-label{
+    text-align:center; margin-top:16px;
+    font-family:'JetBrains Mono', monospace; font-size:0.75rem; color:var(--text-dim);
+  }
+  .stat-list{display:flex; flex-direction:column; gap:0;}
+  .stat-row{
+    display:flex; justify-content:space-between; align-items:baseline;
+    padding:22px 0; border-bottom:1px solid var(--line);
+  }
+  .stat-row:first-child{border-top:1px solid var(--line);}
+  .stat-name{font-size:1rem; color:var(--text-dim);}
+  .stat-value{font-family:'JetBrains Mono', monospace; font-size:1.4rem; color:var(--clay);}
+
+  /* ---------- CTA / FOOTER ---------- */
+  .cta{
+    background:linear-gradient(180deg, var(--sky-ink), var(--sky-deep));
+    color:var(--milk);
+    text-align:center;
+    padding:110px 32px;
+  }
+  .cta h2{font-size:clamp(2rem,4.5vw,3rem); max-width:16ch; margin:0 auto 20px;}
+  .cta p{color:#c7c2b0; max-width:44ch; margin:0 auto 36px; line-height:1.6;}
+
+  footer{background:var(--sky-deep); color:#8e8a7a; padding:40px 32px; border-top:1px solid rgba(250,247,239,0.1);}
+  footer .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:16px; font-size:0.85rem;}
+  footer .brand{color:var(--milk); font-size:1rem;}
+
+  @media (max-width: 860px){
+    .navlinks{display:none;}
+    .story-grid, .quality-grid{grid-template-columns:1fr; gap:40px;}
+    .timeline{grid-template-columns:1fr 1fr;}
+    .product-grid{grid-template-columns:1fr 1fr;}
+    section{padding:64px 0;}
+  }
+  @media (max-width: 480px){
+    .timeline{grid-template-columns:1fr;}
+    .product-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand">Pillai's <span>Dairy</span></div>
+    <div class="navlinks">
+      <a href="#story">Our Story</a>
+      <a href="#timings">Collection</a>
+      <a href="#products">Products</a>
+      <a href="#quality">Quality</a>
+      <a href="#visit">Visit</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="stars" aria-hidden="true"></div>
+  <div class="sun" aria-hidden="true"></div>
+  <div class="wrap hero-content">
+    <p class="eyebrow">4:30 AM &nbsp;·&nbsp; Kancheepuram, Tamil Nadu</p>
+    <h1>The milk hasn't stopped moving since before sunrise.</h1>
+    <p class="lede">Pillai's Dairy collects, chills, and delivers milk from the same village society herd every single morning and evening — no holding tanks, no middle days. What's milked today reaches your door today.</p>
+    <div class="hero-actions">
+      <a href="#products" class="btn btn-primary">See what's fresh</a>
+      <a href="#visit" class="btn btn-ghost">Visit the society</a>
+    </div>
+  </div>
+</header>
+
+<section class="story" id="story">
+  <div class="wrap story-grid">
+    <div class="story-figure">
+      <div class="ring r1" aria-hidden="true"></div>
+      <div class="ring r2" aria-hidden="true"></div>
+      <p class="cap">EST. VILLAGE MILK CO-OPERATIVE SOCIETY, KANCHEEPURAM DIST.</p>
+    </div>
+    <div class="story-copy">
+      <p class="eyebrow">Our story</p>
+      <h2 style="margin:12px 0 20px;">Built on a village society, not a factory floor.</h2>
+      <p>Pillai's Dairy grew out of a small <strong>Bulk Milk Collection Unit</strong> that once served a handful of farming families around Kancheepuram. Every can that came in was weighed, tested, and chilled by hand before it ever left the village.</p>
+      <p>That's still how it works. We buy directly from farmers we know by name, chill within the hour at the local collection point, and route the same tanker to the same households every day. <strong>No blending across weeks, no unmarked cartons.</strong></p>
+      <p>Growth, for us, has meant more villages joining the society — not more distance between the cow and your kitchen.</p>
+    </div>
+  </div>
+</section>
+
+<section class="timeline-section" id="timings">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">How the day runs</p>
+      <h2>Two milkings. Same route, every day.</h2>
+      <p>The society collects twice daily. Everything downstream — chilling, testing, delivery — is timed off these two windows.</p>
+    </div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-time">04:30</div>
+        <h3>Morning milking</h3>
+        <p>Farmers bring cans to the village collection point before first light.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-time">05:15</div>
+        <h3>Test &amp; chill</h3>
+        <p>Fat and SNF checked can by can, then cooled to 4°C within the hour.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-time">07:00</div>
+        <h3>Morning delivery</h3>
+        <p>Chilled milk goes out on the same route it's followed for years.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-time">17:30</div>
+        <h3>Evening round</h3>
+        <p>The second milking repeats the process for the evening delivery.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="products" id="products">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">From the dairy</p>
+      <h2>What we send out the door.</h2>
+      <p>A short list, kept short on purpose — everything here is made to move fast, not sit in cold storage.</p>
+    </div>
+    <div class="product-grid">
+      <div class="product-card">
+        <div>
+          <div class="p-mark">Ml</div>
+          <h3>Toned Milk</h3>
+          <p>Our everyday pouch milk, standardised and delivered twice daily.</p>
+        </div>
+        <div class="p-stat">FAT 3.0% · SNF 8.5%</div>
+      </div>
+      <div class="product-card">
+        <div>
+          <div class="p-mark">Cd</div>
+          <h3>Set Curd</h3>
+          <p>Set overnight in clay-lined vats the way the society always has.</p>
+        </div>
+        <div class="p-stat">CULTURED · 12HR SET</div>
+      </div>
+      <div class="product-card">
+        <div>
+          <div class="p-mark">Gh</div>
+          <h3>Cow Ghee</h3>
+          <p>Slow-simmered from cultured cream, hand-skimmed in small batches.</p>
+        </div>
+        <div class="p-stat">BATCH · 8L / DAY</div>
+      </div>
+      <div class="product-card">
+        <div>
+          <div class="p-mark">Pn</div>
+          <h3>Paneer</h3>
+          <p>Pressed fresh from the morning milk, sold same-day only.</p>
+        </div>
+        <div class="p-stat">SAME-DAY ONLY</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="quality" id="quality">
+  <div class="wrap quality-grid">
+    <div>
+      <div class="jar-wrap">
+        <div class="jar">
+          <div class="jar-fill"></div>
+        </div>
+      </div>
+      <p class="jar-label">Sample test — this morning's batch</p>
+    </div>
+    <div>
+      <p class="eyebrow">Quality, checked every can</p>
+      <h2 style="margin:12px 0 24px;">We test before we chill, not after.</h2>
+      <div class="stat-list">
+        <div class="stat-row"><span class="stat-name">Fat content</span><span class="stat-value">3.0–4.2%</span></div>
+        <div class="stat-row"><span class="stat-name">SNF (solids-not-fat)</span><span class="stat-value">8.5%+</span></div>
+        <div class="stat-row"><span class="stat-name">Chilled within</span><span class="stat-value">60 min</span></div>
+        <div class="stat-row"><span class="stat-name">Adulteration checks</span><span class="stat-value">every can</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta" id="visit">
+  <div class="wrap" style="padding:0;">
+    <p class="eyebrow" style="color:#e3a008;">Come see it yourself</p>
+    <h2>The collection point is open every morning. So are we.</h2>
+    <p>Drop by the village society before 6 AM to watch the day's milk come in, or place a standing order for daily delivery.</p>
+    <a href="#" class="btn btn-primary">Start a delivery</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="brand">Pillai's Dairy</div>
+    <div>Village Milk Co-operative Society · Kancheepuram, Tamil Nadu</div>
+    <div>Open 4:30 AM – 7:00 PM, daily</div>
+  </div>
+</footer>
+
+</body>
+</html>
