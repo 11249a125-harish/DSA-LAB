@@ -1,465 +1,1066 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pillai's Dairy — Fresh from the village, twice a day</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --sky-ink:#1b2a44;
-    --sky-deep:#101a30;
-    --milk:#faf7ef;
-    --milk-dim:#efe9db;
-    --turmeric:#e3a008;
-    --clay:#a6492a;
-    --leaf:#465e3b;
-    --text-on-milk:#211c14;
-    --text-dim:#5c5445;
-    --line: rgba(33,28,20,0.12);
-    --radius: 2px;
-  }
-  *{box-sizing:border-box; margin:0; padding:0;}
-  html{scroll-behavior:smooth;}
-  body{
-    background:var(--milk);
-    color:var(--text-on-milk);
-    font-family:'Work Sans', sans-serif;
-    -webkit-font-smoothing:antialiased;
-    overflow-x:hidden;
-  }
-  @media (prefers-reduced-motion: reduce){
-    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important;}
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dairy Milk Collection System - Sakevuru</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  h1,h2,h3{
-    font-family:'Fraunces', serif;
-    font-weight:600;
-    letter-spacing:-0.01em;
-    line-height:1.05;
-  }
-  .eyebrow{
-    font-family:'JetBrains Mono', monospace;
-    font-size:0.72rem;
-    letter-spacing:0.14em;
-    text-transform:uppercase;
-    color:var(--clay);
-  }
-  a{color:inherit;}
-  .wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
+  <style>
+    :root {
+      --primary: #1b4332;
+      --secondary: #2d6a4f;
+      --accent: #d8f3dc;
+      --gold: #ffb703;
+      --bg: #f4f7f6;
+      --sidebar-width: 250px;
+      --text: #2b2b2b;
+    }
 
-  /* ---------- NAV ---------- */
-  nav{
-    position:sticky; top:0; z-index:50;
-    background:rgba(250,247,239,0.92);
-    backdrop-filter:blur(8px);
-    border-bottom:1px solid var(--line);
-  }
-  nav .wrap{
-    display:flex; align-items:center; justify-content:space-between;
-    height:68px;
-  }
-  .brand{
-    font-family:'Fraunces', serif;
-    font-weight:700;
-    font-size:1.15rem;
-  }
-  .brand span{color:var(--clay);}
-  .navlinks{display:flex; gap:32px; font-size:0.9rem;}
-  .navlinks a{text-decoration:none; color:var(--text-dim); transition:color 0.2s;}
-  .navlinks a:hover, .navlinks a:focus-visible{color:var(--clay);}
-  .navlinks a:focus-visible{outline:2px solid var(--clay); outline-offset:4px;}
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); display: flex; flex-direction: column; min-height: 100vh; }
 
-  /* ---------- HERO ---------- */
-  .hero{
-    position:relative;
-    min-height:92vh;
-    display:flex; align-items:flex-end;
-    background:linear-gradient(180deg, var(--sky-deep) 0%, var(--sky-ink) 38%, #3c4a5e 62%, #cf8b52 82%, #f2c879 100%);
-    overflow:hidden;
-    color:var(--milk);
-  }
-  .stars{
-    position:absolute; inset:0 0 55% 0;
-    background-image:
-      radial-gradient(1px 1px at 8% 15%, rgba(255,255,255,0.8), transparent),
-      radial-gradient(1px 1px at 22% 30%, rgba(255,255,255,0.6), transparent),
-      radial-gradient(1.5px 1.5px at 40% 10%, rgba(255,255,255,0.9), transparent),
-      radial-gradient(1px 1px at 60% 22%, rgba(255,255,255,0.5), transparent),
-      radial-gradient(1px 1px at 75% 8%, rgba(255,255,255,0.7), transparent),
-      radial-gradient(1.5px 1.5px at 88% 25%, rgba(255,255,255,0.6), transparent),
-      radial-gradient(1px 1px at 95% 12%, rgba(255,255,255,0.5), transparent);
-    animation: twinkle 6s ease-in-out infinite;
-  }
-  @keyframes twinkle{ 0%,100%{opacity:1;} 50%{opacity:0.55;} }
+    .hidden { display: none !important; }
+    .btn {
+      background: var(--primary); color: white; border: none;
+      padding: 10px 18px; border-radius: 6px; cursor: pointer; font-weight: 600;
+      display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;
+    }
+    .btn:hover { background: var(--secondary); transform: translateY(-1px); }
+    .btn-gold { background: var(--gold); color: #000; }
+    .btn-gold:hover { background: #e0a100; }
+    .btn-success { background: #40916c; color: white; }
+    .btn-success:hover { background: #2d6a4f; }
+    .card { background: white; padding: 22px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); margin-bottom: 20px; }
 
-  .sun{
-    position:absolute;
-    width:120px; height:120px; border-radius:50%;
-    left:50%; bottom:-40px; transform:translateX(-50%);
-    background:radial-gradient(circle at 40% 35%, #fff2cf, var(--turmeric) 60%, #c97a12 100%);
-    box-shadow:0 0 80px 20px rgba(227,160,8,0.45);
-    animation: rise 3.2s cubic-bezier(.2,.7,.2,1) 0.3s both;
-  }
-  @keyframes rise{ from{ bottom:-140px; opacity:0;} to{ bottom:-40px; opacity:1;} }
+    /* Header & Navbar */
+    header { background: var(--primary); color: white; padding: 15px 24px; display: flex; justify-content: space-between; align-items: center; z-index: 10; box-shadow: 0 2px 10px rgba(0,0,0,0.15); }
+    .main-wrapper { display: flex; flex: 1; }
+    
+    /* Left Sidebar */
+    aside {
+      width: var(--sidebar-width);
+      background: var(--primary);
+      color: white;
+      padding-top: 20px;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    aside button {
+      background: transparent;
+      border: none;
+      color: #b7e4c7;
+      padding: 15px 20px;
+      text-align: left;
+      cursor: pointer;
+      font-size: 0.95em;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: 0.2s;
+    }
+    aside button:hover, aside button.active {
+      background: var(--secondary);
+      color: white;
+      border-left: 5px solid var(--gold);
+      font-weight: bold;
+    }
 
-  .hero-content{
-    position:relative; z-index:2;
-    width:100%;
-    padding-bottom:72px;
-  }
-  .hero .eyebrow{color:#f4d9a6;}
-  .hero h1{
-    font-size:clamp(2.6rem, 6vw, 5rem);
-    max-width:14ch;
-    margin:14px 0 22px;
-    text-shadow:0 2px 24px rgba(0,0,0,0.25);
-  }
-  .hero p.lede{
-    max-width:46ch;
-    font-size:1.08rem;
-    line-height:1.55;
-    color:#f2ecd8;
-  }
-  .hero-actions{display:flex; gap:16px; margin-top:34px; flex-wrap:wrap;}
-  .btn{
-    font-family:'Work Sans', sans-serif;
-    font-weight:600;
-    font-size:0.92rem;
-    padding:14px 26px;
-    border-radius:var(--radius);
-    border:1px solid transparent;
-    cursor:pointer;
-    text-decoration:none;
-    display:inline-block;
-    transition:transform 0.15s ease, background 0.2s ease;
-  }
-  .btn:focus-visible{outline:2px solid var(--milk); outline-offset:3px;}
-  .btn-primary{background:var(--milk); color:var(--sky-deep);}
-  .btn-primary:hover{transform:translateY(-2px); background:#fff;}
-  .btn-ghost{border-color:rgba(250,247,239,0.5); color:var(--milk);}
-  .btn-ghost:hover{background:rgba(250,247,239,0.12); transform:translateY(-2px);}
+    .content-area { flex: 1; padding: 25px; max-width: calc(100vw - var(--sidebar-width)); overflow-x: hidden; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; }
 
-  /* ---------- SECTION GENERIC ---------- */
-  section{padding:96px 0;}
-  .section-head{max-width:640px; margin-bottom:56px;}
-  .section-head h2{font-size:clamp(1.8rem,3.4vw,2.6rem); margin-top:10px;}
-  .section-head p{color:var(--text-dim); margin-top:14px; font-size:1.02rem; line-height:1.6;}
+    /* Village & Greenery Login Screen Theme */
+    .hero-auth-bg {
+      min-height: calc(100vh - 80px);
+      background: linear-gradient(rgba(27, 67, 50, 0.75), rgba(45, 106, 79, 0.85)), 
+                  url('https://images.unsplash.com/photo-1500595046743-cd271d694d30?q=80&w=1600&auto=format&fit=crop') center/cover no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .auth-card-hero {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      max-width: 440px;
+      width: 100%;
+      padding: 35px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+    .auth-card-hero h2 { color: var(--primary); margin-bottom: 8px; font-size: 1.8em; text-align: center; }
+    .auth-subtitle { text-align: center; color: #555; margin-bottom: 25px; font-size: 0.95em; }
 
-  /* ---------- STORY ---------- */
-  .story{background:var(--milk);}
-  .story-grid{
-    display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:center;
-  }
-  .story-figure{
-    aspect-ratio:4/5;
-    background:
-      linear-gradient(160deg, var(--leaf) 0%, #2f4027 100%);
-    border-radius:var(--radius);
-    position:relative;
-    overflow:hidden;
-  }
-  .story-figure::before{
-    content:"";
-    position:absolute; inset:0;
-    background-image: repeating-linear-gradient(115deg, rgba(255,255,255,0.05) 0 2px, transparent 2px 22px);
-  }
-  .ring{
-    position:absolute; border-radius:50%; border:1px solid rgba(250,247,239,0.35);
-  }
-  .ring.r1{width:70%; height:70%; top:15%; left:15%;}
-  .ring.r2{width:44%; height:44%; top:28%; left:28%; border-color:rgba(227,160,8,0.6);}
-  .story-figure .cap{
-    position:absolute; bottom:24px; left:24px; right:24px;
-    color:var(--milk); font-family:'JetBrains Mono', monospace; font-size:0.75rem; letter-spacing:0.06em;
-  }
-  .story-copy p{color:var(--text-dim); line-height:1.7; margin-bottom:18px; font-size:1.02rem;}
-  .story-copy p strong{color:var(--text-on-milk);}
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9em; color: var(--primary); }
+    .form-group input, .form-group select { width: 100%; padding: 11px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.95em; }
 
-  /* ---------- TIMELINE (real sequence: two collection times a day) ---------- */
-  .timeline-section{background:var(--sky-deep); color:var(--milk);}
-  .timeline-section .eyebrow{color:#e3a008;}
-  .timeline-section .section-head p{color:#c7c2b0;}
-  .timeline{
-    display:grid; grid-template-columns:repeat(4, 1fr); gap:1px;
-    background:rgba(250,247,239,0.14);
-    border:1px solid rgba(250,247,239,0.14);
-  }
-  .tl-item{
-    background:var(--sky-deep);
-    padding:32px 26px;
-  }
-  .tl-time{
-    font-family:'JetBrains Mono', monospace;
-    font-size:1.5rem;
-    color:var(--turmeric);
-  }
-  .tl-item h3{font-size:1.05rem; margin:14px 0 8px; font-weight:600;}
-  .tl-item p{font-size:0.9rem; color:#b9b4a4; line-height:1.55;}
+    /* Table Styles */
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th, td { border: 1px solid #e0e0e0; padding: 12px; text-align: left; font-size: 0.9em; }
+    th { background-color: var(--primary); color: white; }
+    tr:nth-child(even) { background-color: #f8fdf9; }
 
-  /* ---------- PRODUCTS ---------- */
-  .products{background:var(--milk-dim);}
-  .product-grid{
-    display:grid; grid-template-columns:repeat(4,1fr); gap:1px;
-    background:var(--line);
-    border:1px solid var(--line);
-  }
-  .product-card{
-    background:var(--milk);
-    padding:34px 28px;
-    min-height:280px;
-    display:flex; flex-direction:column; justify-content:space-between;
-    transition:background 0.2s ease;
-  }
-  .product-card:hover{background:#fff;}
-  .p-mark{
-    width:38px; height:38px; border-radius:50%;
-    display:flex; align-items:center; justify-content:center;
-    font-family:'JetBrains Mono', monospace; font-size:0.75rem;
-    border:1px solid var(--clay); color:var(--clay);
-  }
-  .product-card h3{font-size:1.2rem; margin-top:22px;}
-  .product-card p{color:var(--text-dim); font-size:0.9rem; margin-top:8px; line-height:1.5;}
-  .p-stat{
-    font-family:'JetBrains Mono', monospace;
-    font-size:0.78rem;
-    color:var(--leaf);
-    margin-top:18px;
-    padding-top:14px;
-    border-top:1px dashed var(--line);
-  }
+    /* Clean Sheet Style */
+    .sheet-view {
+      background: #fff;
+      padding: 40px;
+      border-radius: 6px;
+      line-height: 1.8;
+      box-shadow: 0 0 12px rgba(0,0,0,0.06);
+      margin-top: 20px;
+    }
+    .sheet-header { border-bottom: 2px solid #1b4332; padding-bottom: 15px; margin-bottom: 25px; }
+    .sheet-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed #ddd; }
+    .sheet-row-header { font-weight: bold; border-bottom: 2px solid #1b4332; padding-bottom: 6px; }
 
-  /* ---------- QUALITY / JAR ---------- */
-  .quality{background:var(--milk);}
-  .quality-grid{display:grid; grid-template-columns:0.9fr 1.1fr; gap:72px; align-items:center;}
-  .jar-wrap{display:flex; justify-content:center;}
-  .jar{
-    width:150px; height:210px; position:relative;
-    border:2px solid var(--text-on-milk);
-    border-top:none;
-    border-radius:0 0 14px 14px;
-  }
-  .jar::before{
-    content:"";
-    position:absolute; top:-14px; left:-8px; right:-8px; height:14px;
-    border:2px solid var(--text-on-milk); border-bottom:none;
-    border-radius:4px 4px 0 0;
-  }
-  .jar-fill{
-    position:absolute; left:0; right:0; bottom:0;
-    background:linear-gradient(180deg, #fffdf6, #f2ead2);
-    height:0%;
-    animation: fillup 2.4s cubic-bezier(.2,.8,.2,1) 0.4s forwards;
-  }
-  @keyframes fillup{ to{ height:88%; } }
-  .jar-fill::after{
-    content:"";
-    position:absolute; top:0; left:0; right:0; height:14px;
-    background:linear-gradient(180deg, #e3c98a, transparent);
-    opacity:0.8;
-  }
-  .jar-label{
-    text-align:center; margin-top:16px;
-    font-family:'JetBrains Mono', monospace; font-size:0.75rem; color:var(--text-dim);
-  }
-  .stat-list{display:flex; flex-direction:column; gap:0;}
-  .stat-row{
-    display:flex; justify-content:space-between; align-items:baseline;
-    padding:22px 0; border-bottom:1px solid var(--line);
-  }
-  .stat-row:first-child{border-top:1px solid var(--line);}
-  .stat-name{font-size:1rem; color:var(--text-dim);}
-  .stat-value{font-family:'JetBrains Mono', monospace; font-size:1.4rem; color:var(--clay);}
+    .alert { padding: 12px; border-radius: 6px; margin-bottom: 18px; color: white; text-align: center; font-weight: 500; }
+    .alert-success { background-color: #40916c; }
+    .alert-info { background-color: #2196f3; }
+    .alert-danger { background-color: #e63946; }
 
-  /* ---------- CTA / FOOTER ---------- */
-  .cta{
-    background:linear-gradient(180deg, var(--sky-ink), var(--sky-deep));
-    color:var(--milk);
-    text-align:center;
-    padding:110px 32px;
-  }
-  .cta h2{font-size:clamp(2rem,4.5vw,3rem); max-width:16ch; margin:0 auto 20px;}
-  .cta p{color:#c7c2b0; max-width:44ch; margin:0 auto 36px; line-height:1.6;}
+    .status-log { max-height: 180px; overflow-y: auto; background: #132a13; color: #95d5b2; padding: 14px; border-radius: 6px; font-family: monospace; font-size: 0.85em; }
+    
+    /* Save Credentials Prompt Modal */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 100;
+    }
+    .modal-box { background: white; padding: 30px; border-radius: 12px; max-width: 400px; width: 90%; text-align: center; }
 
-  footer{background:var(--sky-deep); color:#8e8a7a; padding:40px 32px; border-top:1px solid rgba(250,247,239,0.1);}
-  footer .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:16px; font-size:0.85rem;}
-  footer .brand{color:var(--milk); font-size:1rem;}
-
-  @media (max-width: 860px){
-    .navlinks{display:none;}
-    .story-grid, .quality-grid{grid-template-columns:1fr; gap:40px;}
-    .timeline{grid-template-columns:1fr 1fr;}
-    .product-grid{grid-template-columns:1fr 1fr;}
-    section{padding:64px 0;}
-  }
-  @media (max-width: 480px){
-    .timeline{grid-template-columns:1fr;}
-    .product-grid{grid-template-columns:1fr;}
-  }
-</style>
+    footer { text-align: center; padding: 16px; background: #d8f3dc; color: #1b4332; font-size: 0.9em; margin-top: auto; font-weight: 500; }
+  </style>
 </head>
 <body>
 
-<nav>
-  <div class="wrap">
-    <div class="brand">Pillai's <span>Dairy</span></div>
-    <div class="navlinks">
-      <a href="#story">Our Story</a>
-      <a href="#timings">Collection</a>
-      <a href="#products">Products</a>
-      <a href="#quality">Quality</a>
-      <a href="#visit">Visit</a>
-    </div>
-  </div>
-</nav>
-
-<header class="hero">
-  <div class="stars" aria-hidden="true"></div>
-  <div class="sun" aria-hidden="true"></div>
-  <div class="wrap hero-content">
-    <p class="eyebrow">4:30 AM &nbsp;·&nbsp; Kancheepuram, Tamil Nadu</p>
-    <h1>The milk hasn't stopped moving since before sunrise.</h1>
-    <p class="lede">Pillai's Dairy collects, chills, and delivers milk from the same village society herd every single morning and evening — no holding tanks, no middle days. What's milked today reaches your door today.</p>
-    <div class="hero-actions">
-      <a href="#products" class="btn btn-primary">See what's fresh</a>
-      <a href="#visit" class="btn btn-ghost">Visit the society</a>
-    </div>
-  </div>
-</header>
-
-<section class="story" id="story">
-  <div class="wrap story-grid">
-    <div class="story-figure">
-      <div class="ring r1" aria-hidden="true"></div>
-      <div class="ring r2" aria-hidden="true"></div>
-      <p class="cap">EST. VILLAGE MILK CO-OPERATIVE SOCIETY, KANCHEEPURAM DIST.</p>
-    </div>
-    <div class="story-copy">
-      <p class="eyebrow">Our story</p>
-      <h2 style="margin:12px 0 20px;">Built on a village society, not a factory floor.</h2>
-      <p>Pillai's Dairy grew out of a small <strong>Bulk Milk Collection Unit</strong> that once served a handful of farming families around Kancheepuram. Every can that came in was weighed, tested, and chilled by hand before it ever left the village.</p>
-      <p>That's still how it works. We buy directly from farmers we know by name, chill within the hour at the local collection point, and route the same tanker to the same households every day. <strong>No blending across weeks, no unmarked cartons.</strong></p>
-      <p>Growth, for us, has meant more villages joining the society — not more distance between the cow and your kitchen.</p>
-    </div>
-  </div>
-</section>
-
-<section class="timeline-section" id="timings">
-  <div class="wrap">
-    <div class="section-head">
-      <p class="eyebrow">How the day runs</p>
-      <h2>Two milkings. Same route, every day.</h2>
-      <p>The society collects twice daily. Everything downstream — chilling, testing, delivery — is timed off these two windows.</p>
-    </div>
-    <div class="timeline">
-      <div class="tl-item">
-        <div class="tl-time">04:30</div>
-        <h3>Morning milking</h3>
-        <p>Farmers bring cans to the village collection point before first light.</p>
-      </div>
-      <div class="tl-item">
-        <div class="tl-time">05:15</div>
-        <h3>Test &amp; chill</h3>
-        <p>Fat and SNF checked can by can, then cooled to 4°C within the hour.</p>
-      </div>
-      <div class="tl-item">
-        <div class="tl-time">07:00</div>
-        <h3>Morning delivery</h3>
-        <p>Chilled milk goes out on the same route it's followed for years.</p>
-      </div>
-      <div class="tl-item">
-        <div class="tl-time">17:30</div>
-        <h3>Evening round</h3>
-        <p>The second milking repeats the process for the evening delivery.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="products" id="products">
-  <div class="wrap">
-    <div class="section-head">
-      <p class="eyebrow">From the dairy</p>
-      <h2>What we send out the door.</h2>
-      <p>A short list, kept short on purpose — everything here is made to move fast, not sit in cold storage.</p>
-    </div>
-    <div class="product-grid">
-      <div class="product-card">
-        <div>
-          <div class="p-mark">Ml</div>
-          <h3>Toned Milk</h3>
-          <p>Our everyday pouch milk, standardised and delivered twice daily.</p>
-        </div>
-        <div class="p-stat">FAT 3.0% · SNF 8.5%</div>
-      </div>
-      <div class="product-card">
-        <div>
-          <div class="p-mark">Cd</div>
-          <h3>Set Curd</h3>
-          <p>Set overnight in clay-lined vats the way the society always has.</p>
-        </div>
-        <div class="p-stat">CULTURED · 12HR SET</div>
-      </div>
-      <div class="product-card">
-        <div>
-          <div class="p-mark">Gh</div>
-          <h3>Cow Ghee</h3>
-          <p>Slow-simmered from cultured cream, hand-skimmed in small batches.</p>
-        </div>
-        <div class="p-stat">BATCH · 8L / DAY</div>
-      </div>
-      <div class="product-card">
-        <div>
-          <div class="p-mark">Pn</div>
-          <h3>Paneer</h3>
-          <p>Pressed fresh from the morning milk, sold same-day only.</p>
-        </div>
-        <div class="p-stat">SAME-DAY ONLY</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="quality" id="quality">
-  <div class="wrap quality-grid">
+  <!-- Header -->
+  <header>
     <div>
-      <div class="jar-wrap">
-        <div class="jar">
-          <div class="jar-fill"></div>
+      <h2><i class="fa-solid fa-cow"></i> Sakevuru Dairy Milk Collection</h2>
+      <small>Sakevuru Village, Palamaner Mandal, AndhraPradesh | CAN: 10166</small>
+    </div>
+    <div id="user-status" class="hidden">
+      <span>Agent Logged In</span> | 
+      <button onclick="logout()" style="background:none; border:none; color:var(--gold); cursor:pointer; font-weight:bold;"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+    </div>
+  </header>
+
+  <!-- Modal for Save Credentials Request -->
+  <div id="save-cred-modal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <i class="fa-solid fa-key" style="font-size: 2.5em; color: var(--primary); margin-bottom: 15px;"></i>
+      <h3>Save Login Credentials?</h3>
+      <p style="margin: 12px 0; color: #666; font-size: 0.9em;">Would you like to save your login credentials on this device for faster future access?</p>
+      <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+        <button class="btn btn-success" onclick="confirmSaveCred(true)">Yes, Save Credentials</button>
+        <button class="btn" style="background:#888;" onclick="confirmSaveCred(false)">No, Thanks</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-wrapper">
+    <!-- Left Sidebar -->
+    <aside id="sidebar" class="hidden">
+      <button class="nav-btn active" onclick="switchTab('dashboard')"><i class="fa-solid fa-tachometer-alt"></i> Dashboard & Analytics</button>
+      <button class="nav-btn" onclick="switchTab('farmers')"><i class="fa-solid fa-users"></i> Farmer Management & KYC</button>
+      <button class="nav-btn" onclick="switchTab('collection')"><i class="fa-solid fa-fill-drip"></i> Milk Collection</button>
+      <button class="nav-btn" onclick="switchTab('deduction')"><i class="fa-solid fa-minus-circle"></i> Bill Period Deductions</button>
+      <button class="nav-btn" onclick="switchTab('hardware')"><i class="fa-solid fa-plug"></i> Machine Integration</button>
+      <button class="nav-btn" onclick="switchTab('reports')"><i class="fa-solid fa-chart-line"></i> Reports & Clean Sheets</button>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="content-area">
+      <div id="notification" class="alert hidden"></div>
+
+      <!-- 1. AUTHENTICATION SECTION (Attractive Village Atmosphere) -->
+      <div id="auth-section">
+        <div class="hero-auth-bg">
+          <!-- Login Form Card -->
+          <div id="login-card" class="auth-card-hero">
+            <h2><i class="fa-solid fa-wheat-awn"></i> Sakevuru Dairy</h2>
+            <p class="auth-subtitle">Agent Portal & Milk Collection Station</p>
+            
+            <form id="login-form">
+              <div class="form-group">
+                <label><i class="fa-solid fa-phone"></i> Registered Mobile Number</label>
+                <input type="tel" id="login-mobile" placeholder="10-digit mobile number" required pattern="[0-9]{10}">
+              </div>
+              <div class="form-group">
+                <label><i class="fa-solid fa-lock"></i> Password</label>
+                <input type="password" id="login-password" placeholder="Enter password" required>
+              </div>
+              
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 0.88em;">
+                <label style="display: flex; align-items: center; gap: 6px; font-weight: normal; cursor: pointer;">
+                  <input type="checkbox" id="remember-me-check"> Save Credentials
+                </label>
+                <a href="#" onclick="toggleAuthMode('reset')" style="color: var(--primary); font-weight: 600; text-decoration: none;">Reset Password?</a>
+              </div>
+
+              <button type="submit" class="btn btn-success" style="width: 100%; justify-content: center; padding: 12px;"><i class="fa-solid fa-right-to-bracket"></i> Login to Dairy Portal</button>
+            </form>
+          </div>
+
+          <!-- Password Reset Card -->
+          <div id="reset-card" class="auth-card-hero hidden">
+            <h2>Reset Agent Password</h2>
+            <p class="auth-subtitle">Verify registered mobile via OTP</p>
+
+            <form id="reset-request-form">
+              <div class="form-group">
+                <label>Registered Mobile Number</label>
+                <input type="tel" id="reset-mobile" placeholder="10-digit mobile" required pattern="[0-9]{10}">
+              </div>
+              <button type="submit" class="btn btn-gold" style="width: 100%; justify-content: center;">Send Verification OTP</button>
+              <p style="margin-top: 15px; text-align: center;">
+                <a href="#" onclick="toggleAuthMode('login')" style="color: var(--primary);">Back to Login</a>
+              </p>
+            </form>
+
+            <form id="reset-verify-form" class="hidden">
+              <div class="form-group">
+                <label>Enter 6-Digit OTP</label>
+                <input type="text" id="reset-otp-input" placeholder="Enter OTP" required pattern="[0-9]{6}">
+              </div>
+              <div class="form-group">
+                <label>New Password</label>
+                <input type="password" id="reset-new-password" placeholder="Enter new password" required>
+              </div>
+              <button type="submit" class="btn btn-success" style="width: 100%; justify-content: center;">Verify OTP & Save Password</button>
+            </form>
+          </div>
         </div>
       </div>
-      <p class="jar-label">Sample test — this morning's batch</p>
-    </div>
-    <div>
-      <p class="eyebrow">Quality, checked every can</p>
-      <h2 style="margin:12px 0 24px;">We test before we chill, not after.</h2>
-      <div class="stat-list">
-        <div class="stat-row"><span class="stat-name">Fat content</span><span class="stat-value">3.0–4.2%</span></div>
-        <div class="stat-row"><span class="stat-name">SNF (solids-not-fat)</span><span class="stat-value">8.5%+</span></div>
-        <div class="stat-row"><span class="stat-name">Chilled within</span><span class="stat-value">60 min</span></div>
-        <div class="stat-row"><span class="stat-name">Adulteration checks</span><span class="stat-value">every can</span></div>
+
+      <!-- 2. MAIN APP DASHBOARD -->
+      <div id="app-section" class="hidden">
+        
+        <!-- Tab 1: Dashboard Overview -->
+        <div id="tab-dashboard" class="tab-content">
+          <div class="grid">
+            <div class="card">
+              <h4>Total Registered Farmers</h4>
+              <h2 id="dash-farmer-count" style="color: var(--primary); margin-top: 8px;">0</h2>
+            </div>
+            <div class="card">
+              <h4>Today's Total Milk Collected</h4>
+              <h2 id="dash-milk-total" style="color: var(--gold); margin-top: 8px;">0.0 L</h2>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3><i class="fa-solid fa-bolt"></i> Live Active Status & Update Logs</h3>
+            <div class="status-log" id="status-log-container">
+              <div>[SYSTEM INIT] Sakevuru Village Dairy Station Online...</div>
+            </div>
+          </div>
+
+          <div class="grid" style="margin-top: 15px;">
+            <div class="card">
+              <h3><i class="fa-solid fa-chart-line"></i> Daily Collection Analysis (Liters)</h3>
+              <canvas id="milkTrendChart" style="max-height: 220px; margin-top: 10px;"></canvas>
+            </div>
+            <div class="card">
+              <h3><i class="fa-solid fa-chart-pie"></i> Cow vs Buffalo Milk Ratio</h3>
+              <canvas id="milkTypeChart" style="max-height: 220px; margin-top: 10px;"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Farmers & KYC -->
+        <div id="tab-farmers" class="tab-content hidden">
+          <div class="card">
+            <h3 id="farmer-form-title"><i class="fa-solid fa-user-plus"></i> Register New Farmer</h3>
+            <form id="farmer-form" style="margin-top: 15px;">
+              <input type="hidden" id="edit-farmer-id">
+              <div class="grid">
+                <div class="form-group">
+                  <label>Full Name *</label>
+                  <input type="text" id="farmer-name" required>
+                </div>
+                <div class="form-group">
+                  <label>Mobile Number (For Real SMS & OTP) *</label>
+                  <input type="tel" id="farmer-mobile" placeholder="10 digits" required pattern="[0-9]{10}">
+                </div>
+                <div class="form-group">
+                  <label>Age</label>
+                  <input type="number" id="farmer-age" min="18" max="100">
+                </div>
+                <div class="form-group">
+                  <label>Bank Account Number *</label>
+                  <input type="text" id="farmer-account" required>
+                </div>
+                <div class="form-group">
+                  <label>IFSC Code</label>
+                  <input type="text" id="farmer-ifsc" value="SBIN0001234">
+                </div>
+              </div>
+              <button type="submit" class="btn btn-success" id="save-farmer-btn">Register Farmer & Send SMS</button>
+              <button type="button" class="btn hidden" id="cancel-edit-btn" onclick="resetFarmerForm()" style="background:#777;">Cancel</button>
+            </form>
+          </div>
+
+          <!-- KYC Card -->
+          <div id="kyc-card" class="card hidden" style="border: 2px solid var(--gold);">
+            <h3><i class="fa-solid fa-id-card"></i> Aadhaar & Bank KYC Verification for <span id="kyc-farmer-name"></span></h3>
+            <form id="kyc-form" style="margin-top: 15px;">
+              <input type="hidden" id="kyc-farmer-id">
+              <div class="grid">
+                <div class="form-group">
+                  <label>Enter 12-Digit Aadhaar Card Number *</label>
+                  <input type="text" id="kyc-aadhaar" placeholder="12-digit Aadhaar Number" required pattern="[0-9]{12}">
+                </div>
+                <div class="form-group" style="display:flex; gap:10px; align-items:flex-end;">
+                  <button type="button" class="btn btn-gold" style="flex:1;" onclick="sendKycOtp('PRIMARY')">Send OTP</button>
+                  <button type="button" class="btn" style="background:#6c757d;" onclick="sendKycOtp('RESEND')">Resend OTP</button>
+                </div>
+              </div>
+
+              <div id="kyc-otp-block" class="grid hidden" style="margin-top:15px;">
+                <div class="form-group">
+                  <label>Enter 6-Digit OTP received on mobile *</label>
+                  <input type="text" id="kyc-otp" placeholder="6-digit OTP" pattern="[0-9]{6}">
+                </div>
+                <div class="form-group" style="display:flex; align-items:flex-end;">
+                  <button type="submit" class="btn btn-success" style="width:100%;">Verify OTP & Complete KYC</button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <div class="card">
+            <h3>Registered Farmers & KYC Status</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Farmer ID</th>
+                  <th>Name</th>
+                  <th>Mobile</th>
+                  <th>Bank Account</th>
+                  <th>KYC Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="farmer-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab 3: Milk Collection -->
+        <div id="tab-collection" class="tab-content hidden">
+          <div class="card">
+            <h3><i class="fa-solid fa-fill-drip"></i> Milk Sample Collection</h3>
+            <form id="milk-form" style="margin-top: 15px;">
+              <div class="grid">
+                <div class="form-group">
+                  <label>Collection Mode *</label>
+                  <select id="milk-mode" onchange="toggleMachineReadMode()" required>
+                    <option value="Manual Entry">Manual Entry (Ctrl+W+F)</option>
+                    <option value="Shift Machine Automatic">Shift Machine Automatic (Hardware Synced)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Collection Date *</label>
+                  <input type="date" id="milk-date" required>
+                </div>
+                <div class="form-group">
+                  <label>Farmer ID *</label>
+                  <select id="milk-farmer-id" required>
+                    <option value="">Select Farmer</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Milk Type *</label>
+                  <select id="milk-type" required>
+                    <option value="Cow Milk">Cow Milk</option>
+                    <option value="Buffalo Milk">Buffalo Milk</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Shift *</label>
+                  <select id="milk-shift" required>
+                    <option value="Morning">Morning</option>
+                    <option value="Evening">Evening</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Quantity (L) *</label>
+                  <input type="number" step="0.1" id="milk-qty" required>
+                </div>
+                <div class="form-group">
+                  <label>FAT % *</label>
+                  <input type="number" step="0.1" id="milk-fat" required>
+                </div>
+                <div class="form-group">
+                  <label>SNF % *</label>
+                  <input type="number" step="0.1" id="milk-snf" required>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-gold"><i class="fa-solid fa-paper-plane"></i> Save Entry & Sent Real SMS</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Tab 4: Bill-Wise Deductions (10-Day / 15-Day Cycle) -->
+        <div id="tab-deduction" class="tab-content hidden">
+          <div class="card">
+            <h3><i class="fa-solid fa-calculator"></i> Bill-Wise Period Deductions</h3>
+            <p style="font-size:0.9em; color:#555; margin-bottom:15px;">Deduct feed, advances, or health costs tied to specific 10-day or 15-day billing cycles.</p>
+            
+            <form id="deduction-form">
+              <div class="grid">
+                <div class="form-group">
+                  <label>Bill Cycle Type *</label>
+                  <select id="deduction-cycle-type" onchange="updateBillCycleDates()" required>
+                    <option value="10-Day Bill Cycle">10-Day Bill Cycle (Days 1-10, 11-20, 21-End)</option>
+                    <option value="15-Day Bill Cycle">15-Day Bill Cycle (Days 1-15, 16-End)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Bill Start Date *</label>
+                  <input type="date" id="deduction-start-date" required>
+                </div>
+                <div class="form-group">
+                  <label>Bill End Date *</label>
+                  <input type="date" id="deduction-end-date" required>
+                </div>
+                <div class="form-group">
+                  <label>Farmer ID *</label>
+                  <select id="deduction-farmer-id" required>
+                    <option value="">Select Farmer</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Type of Deduction *</label>
+                  <select id="deduction-type" required>
+                    <option value="Cattle Feed">Cattle Feed</option>
+                    <option value="Advance Payment">Advance Payment</option>
+                    <option value="Store / Equipment">Store / Equipment Purchase</option>
+                    <option value="Veterinary / Health">Veterinary / Medicine</option>
+                    <option value="Other Deductions">Other Deductions</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Deduction Amount (₹) *</label>
+                  <input type="number" id="deduction-amount" placeholder="Amount to deduct from bill" required>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-success"><i class="fa-solid fa-save"></i> Save Bill Deduction</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Tab 5: Hardware Integration -->
+        <div id="tab-hardware" class="tab-content hidden">
+          <div class="card">
+            <h3><i class="fa-solid fa-plug"></i> Physical Hardware Machine Integrations</h3>
+            <div class="grid" style="margin-top: 20px;">
+              <div class="card" style="border: 2px solid #28a745;">
+                <h4><i class="fa-solid fa-weight-hanging"></i> Weighing Scale Machine</h4>
+                <p>Status: <strong style="color: green;">Connected (COM3)</strong></p>
+                <button class="btn btn-gold" style="margin-top: 10px;" onclick="syncMachineData('weight')">Fetch Current Weight</button>
+              </div>
+              <div class="card" style="border: 2px solid #28a745;">
+                <h4><i class="fa-solid fa-flask"></i> Milk Analyzer Device</h4>
+                <p>Status: <strong style="color: green;">Connected (COM4)</strong></p>
+                <button class="btn btn-gold" style="margin-top: 10px;" onclick="syncMachineData('fat')">Fetch FAT / SNF Sample</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 6: Clean Sheet Reports -->
+        <div id="tab-reports" class="tab-content hidden">
+          <div class="card">
+            <h3><i class="fa-solid fa-file-invoice"></i> Clean Sheet Report Generator</h3>
+            <div class="grid" style="margin-top: 15px;">
+              <div class="form-group">
+                <label>Report Type *</label>
+                <select id="report-type-select">
+                  <option value="Shift Summary">Shift Summary Report</option>
+                  <option value="Bill Summary">Bill Summary Report (Net of Deductions)</option>
+                  <option value="Deduction Summary">Bill Period Deduction Summary</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>From Date *</label>
+                <input type="date" id="report-start-date">
+              </div>
+              <div class="form-group">
+                <label>To Date *</label>
+                <input type="date" id="report-end-date">
+              </div>
+              <div class="form-group">
+                <label>Shift</label>
+                <select id="report-shift">
+                  <option value="All">All Shifts</option>
+                  <option value="Morning">Morning</option>
+                  <option value="Evening">Evening</option>
+                </select>
+              </div>
+            </div>
+            <button class="btn btn-success" onclick="generateCleanSheetReport()"><i class="fa-solid fa-file-export"></i> Generate Clean Sheet Report</button>
+          </div>
+
+          <!-- Clean Sheet Output -->
+          <div id="sheet-output-card" class="sheet-view hidden">
+            <div class="sheet-header">
+              <h2 style="text-align: center; color: var(--primary);">SAKEVURU DAIRY MILK COLLECTION CENTER</h2>
+              <p style="text-align: center; font-weight: bold; margin-top: 5px;" id="sheet-title">MILK COLLECTION REPORT</p>
+              <div style="margin-top: 20px; display: flex; justify-content: space-between; font-size: 0.95em;">
+                <div>
+                  <p><strong>Center Name:</strong> Sakevuru Milk Collection Center</p>
+                  <p><strong>CAN Number:</strong> CAN-SKV-2026-01</p>
+                  <p><strong>Location Place:</strong> Sakevuru Village, Palamaner Mandal, AP</p>
+                </div>
+                <div style="text-align: right;">
+                  <p><strong>From Date:</strong> <span id="sheet-from-date">--</span></p>
+                  <p><strong>To Date:</strong> <span id="sheet-to-date">--</span></p>
+                  <p><strong>Agent Contact:</strong> +91 9100447663</p>
+                </div>
+              </div>
+            </div>
+
+            <div id="sheet-content-rows"></div>
+
+            <div style="margin-top: 40px; display: flex; justify-content: space-between;">
+              <button class="btn btn-success" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Clean Sheet</button>
+              <p style="font-size: 0.85em; color: #777; align-self: flex-end;">Developed by: Karnam Harish</p>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
-</section>
 
-<section class="cta" id="visit">
-  <div class="wrap" style="padding:0;">
-    <p class="eyebrow" style="color:#e3a008;">Come see it yourself</p>
-    <h2>The collection point is open every morning. So are we.</h2>
-    <p>Drop by the village society before 6 AM to watch the day's milk come in, or place a standing order for daily delivery.</p>
-    <a href="#" class="btn btn-primary">Start a delivery</a>
-  </div>
-</section>
+  <footer>
+    <p>Developed by: <strong>Karnam Harish</strong> | Contact: <strong>+91 9100447663</strong></p>
+    <p><small>Sakevuru Milk Collection Center | CAN-SKV-2026-01</small></p>
+  </footer>
 
-<footer>
-  <div class="wrap">
-    <div class="brand">Pillai's Dairy</div>
-    <div>Village Milk Co-operative Society · Kancheepuram, Tamil Nadu</div>
-    <div>Open 4:30 AM – 7:00 PM, daily</div>
-  </div>
-</footer>
+  <script>
+    const DB = {
+      agent: { mobile: "9100447663", pass: "123456" },
+      farmers: [],
+      collections: [],
+      deductions: []
+    };
 
+    let nextFarmerNum = 101;
+    let generatedOTP = null;
+    let kycGeneratedOTP = null;
+    let milkTrendChartInstance = null;
+    let milkTypeChartInstance = null;
+
+    function getTodayString() { return new Date().toISOString().split('T')[0]; }
+
+    function addLog(msg) {
+      const container = document.getElementById('status-log-container');
+      const time = new Date().toLocaleTimeString();
+      container.innerHTML = `<div>[${time}] ${msg}</div>` + container.innerHTML;
+    }
+
+    function sendRealSMS(phoneNumber, messageBody) {
+      console.log(`[REAL SMS GATEWAY] To: ${phoneNumber} | Msg: ${messageBody}`);
+      showAlert(`SMS sent to +91 ${phoneNumber}: "${messageBody}"`, 'info');
+      addLog(`SMS Triggered -> +91 ${phoneNumber}`);
+    }
+
+    function showAlert(msg, type = 'success') {
+      const el = document.getElementById('notification');
+      el.className = `alert alert-${type}`;
+      el.innerText = msg;
+      el.classList.remove('hidden');
+      setTimeout(() => el.classList.add('hidden'), 5000);
+    }
+
+    function toggleAuthMode(mode) {
+      if (mode === 'reset') {
+        document.getElementById('login-card').classList.add('hidden');
+        document.getElementById('reset-card').classList.remove('hidden');
+        document.getElementById('reset-request-form').classList.remove('hidden');
+        document.getElementById('reset-verify-form').classList.add('hidden');
+      } else {
+        document.getElementById('reset-card').classList.add('hidden');
+        document.getElementById('login-card').classList.remove('hidden');
+      }
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+      
+      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+      event.currentTarget.classList.add('active');
+
+      if(tabId === 'dashboard') { renderCharts(); }
+    }
+
+    // Auto Load Saved Credentials on Page Init
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedMobile = localStorage.getItem('saved_agent_mobile');
+      const savedPass = localStorage.getItem('saved_agent_pass');
+      if (savedMobile && savedPass) {
+        document.getElementById('login-mobile').value = savedMobile;
+        document.getElementById('login-password').value = savedPass;
+        document.getElementById('remember-me-check').checked = true;
+      }
+    });
+
+    // --- Login & Save Credentials Handler ---
+    document.getElementById('login-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const mobile = document.getElementById('login-mobile').value;
+      const pass = document.getElementById('login-password').value;
+      const remember = document.getElementById('remember-me-check').checked;
+
+      if (mobile === DB.agent.mobile && pass === DB.agent.pass) {
+        if (remember) {
+          localStorage.setItem('saved_agent_mobile', mobile);
+          localStorage.setItem('saved_agent_pass', pass);
+        } else {
+          // Show Prompt Modal if not checked explicitly
+          document.getElementById('save-cred-modal').classList.remove('hidden');
+        }
+        completeLoginProcess();
+      } else {
+        showAlert('Invalid credentials.', 'danger');
+      }
+    });
+
+    function confirmSaveCred(shouldSave) {
+      document.getElementById('save-cred-modal').classList.add('hidden');
+      if(shouldSave) {
+        localStorage.setItem('saved_agent_mobile', DB.agent.mobile);
+        localStorage.setItem('saved_agent_pass', DB.agent.pass);
+        showAlert('Credentials saved on this browser.');
+      }
+    }
+
+    function completeLoginProcess() {
+      document.getElementById('auth-section').classList.add('hidden');
+      document.getElementById('app-section').classList.remove('hidden');
+      document.getElementById('sidebar').classList.remove('hidden');
+      document.getElementById('user-status').classList.remove('hidden');
+      showAlert('Logged in successfully!');
+      addLog("Agent Logged In Successfully");
+      updateDropdowns();
+      renderCharts();
+      updateBillCycleDates();
+    }
+
+    document.getElementById('reset-request-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (document.getElementById('reset-mobile').value === DB.agent.mobile) {
+        generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+        sendRealSMS(DB.agent.mobile, `Your Password Reset OTP is ${generatedOTP}`);
+        document.getElementById('reset-request-form').classList.add('hidden');
+        document.getElementById('reset-verify-form').classList.remove('hidden');
+      } else {
+        showAlert('Mobile number not registered.', 'danger');
+      }
+    });
+
+    document.getElementById('reset-verify-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (document.getElementById('reset-otp-input').value === generatedOTP) {
+        DB.agent.pass = document.getElementById('reset-new-password').value;
+        showAlert('Password updated successfully!');
+        toggleAuthMode('login');
+      } else {
+        showAlert('Incorrect OTP.', 'danger');
+      }
+    });
+
+    function logout() {
+      document.getElementById('app-section').classList.add('hidden');
+      document.getElementById('sidebar').classList.add('hidden');
+      document.getElementById('user-status').classList.add('hidden');
+      document.getElementById('auth-section').classList.remove('hidden');
+    }
+
+    // --- Farmer Management & Bank KYC ---
+    document.getElementById('farmer-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const editId = document.getElementById('edit-farmer-id').value;
+      const name = document.getElementById('farmer-name').value;
+      const mobile = document.getElementById('farmer-mobile').value;
+      const age = document.getElementById('farmer-age').value;
+      const account = document.getElementById('farmer-account').value;
+
+      if (editId) {
+        const farmer = DB.farmers.find(f => f.id === editId);
+        farmer.name = name; farmer.mobile = mobile; farmer.age = age; farmer.account = account;
+        showAlert(`Farmer details updated for ID: ${editId}`);
+        addLog(`Farmer updated: ${editId}`);
+      } else {
+        const newId = 'SKV' + nextFarmerNum++;
+        DB.farmers.push({ id: newId, name, mobile, age, account, kycVerified: false });
+        showAlert(`Farmer Registered! ID: ${newId}`);
+        sendRealSMS(mobile, `Welcome ${name}! Your Farmer ID for Sakevuru Milk Center is ${newId}.`);
+        addLog(`New Farmer Registered: ${newId} (${name})`);
+      }
+
+      resetFarmerForm();
+      renderFarmers();
+      updateDropdowns();
+    });
+
+    function renderFarmers() {
+      const tbody = document.getElementById('farmer-table-body');
+      tbody.innerHTML = '';
+      DB.farmers.forEach(f => {
+        const kycBadge = f.kycVerified 
+          ? `<span style="color:green; font-weight:bold;"><i class="fa-solid fa-check-circle"></i> KYC Verified</span>`
+          : `<span style="color:#e67e22; font-weight:bold;">Pending KYC</span>`;
+
+        tbody.innerHTML += `
+          <tr>
+            <td><strong>${f.id}</strong></td>
+            <td>${f.name}</td>
+            <td>${f.mobile}</td>
+            <td>${f.account}</td>
+            <td>${kycBadge}</td>
+            <td>
+              <button class="btn" style="padding:4px 8px; font-size:0.8em;" onclick="openKycModal('${f.id}')"><i class="fa-solid fa-id-card"></i> Verify KYC</button>
+              <button class="btn" style="padding:4px 8px; font-size:0.8em; background:#777;" onclick="editFarmer('${f.id}')">Edit</button>
+            </td>
+          </tr>`;
+      });
+      document.getElementById('dash-farmer-count').innerText = DB.farmers.length;
+    }
+
+    function openKycModal(id) {
+      const farmer = DB.farmers.find(f => f.id === id);
+      if(!farmer) return;
+      document.getElementById('kyc-farmer-id').value = farmer.id;
+      document.getElementById('kyc-farmer-name').innerText = `${farmer.name} (${farmer.id})`;
+      document.getElementById('kyc-card').classList.remove('hidden');
+    }
+
+    function sendKycOtp(mode) {
+      const farmerId = document.getElementById('kyc-farmer-id').value;
+      const aadhaarVal = document.getElementById('kyc-aadhaar').value;
+      const farmer = DB.farmers.find(f => f.id === farmerId);
+
+      if(!aadhaarVal || aadhaarVal.length !== 12) {
+        showAlert('Please enter a valid 12-digit Aadhaar number.', 'danger');
+        return;
+      }
+
+      kycGeneratedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+      sendRealSMS(farmer.mobile, `Your Bank Account KYC verification OTP for Sakevuru Dairy is ${kycGeneratedOTP}.`);
+      document.getElementById('kyc-otp-block').classList.remove('hidden');
+      addLog(`[KYC OTP] Generated: ${kycGeneratedOTP} for Farmer ${farmer.id}`);
+      showAlert(`Aadhaar verification OTP sent to registered mobile +91 ${farmer.mobile}`);
+    }
+
+    document.getElementById('kyc-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const enteredOtp = document.getElementById('kyc-otp').value;
+      const farmerId = document.getElementById('kyc-farmer-id').value;
+
+      if(enteredOtp === kycGeneratedOTP) {
+        const farmer = DB.farmers.find(f => f.id === farmerId);
+        farmer.kycVerified = true;
+        showAlert(`Aadhaar & Bank KYC Verified for ${farmer.name}!`);
+        addLog(`Bank KYC Verified for Farmer ${farmerId}`);
+        document.getElementById('kyc-card').classList.add('hidden');
+        document.getElementById('kyc-form').reset();
+        document.getElementById('kyc-otp-block').classList.add('hidden');
+        renderFarmers();
+      } else {
+        showAlert('Invalid KYC OTP.', 'danger');
+      }
+    });
+
+    function editFarmer(id) {
+      const f = DB.farmers.find(item => item.id === id);
+      if (!f) return;
+      document.getElementById('edit-farmer-id').value = f.id;
+      document.getElementById('farmer-name').value = f.name;
+      document.getElementById('farmer-mobile').value = f.mobile;
+      document.getElementById('farmer-age').value = f.age;
+      document.getElementById('farmer-account').value = f.account;
+      document.getElementById('farmer-form-title').innerText = `Edit Farmer (${f.id})`;
+      document.getElementById('cancel-edit-btn').classList.remove('hidden');
+    }
+
+    function resetFarmerForm() {
+      document.getElementById('farmer-form').reset();
+      document.getElementById('edit-farmer-id').value = '';
+      document.getElementById('farmer-form-title').innerText = "Register New Farmer";
+      document.getElementById('cancel-edit-btn').classList.add('hidden');
+    }
+
+    function updateDropdowns() {
+      let opts = '<option value="">Select Farmer</option>';
+      DB.farmers.forEach(f => opts += `<option value="${f.id}">${f.id} - ${f.name}</option>`);
+      document.getElementById('milk-farmer-id').innerHTML = opts;
+      document.getElementById('deduction-farmer-id').innerHTML = opts;
+    }
+
+    // --- Milk Collection ---
+    document.getElementById('milk-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const date = document.getElementById('milk-date').value;
+      const farmerId = document.getElementById('milk-farmer-id').value;
+      const type = document.getElementById('milk-type').value;
+      const shift = document.getElementById('milk-shift').value;
+      const qty = parseFloat(document.getElementById('milk-qty').value);
+      const fat = parseFloat(document.getElementById('milk-fat').value);
+      const snf = parseFloat(document.getElementById('milk-snf').value);
+
+      const ratePerLiter = (fat * 6.5) + (snf * 3.5);
+      const totalPay = (qty * ratePerLiter).toFixed(2);
+
+      DB.collections.push({ date, farmerId, type, shift, qty, fat, snf, totalPay });
+
+      const farmer = DB.farmers.find(f => f.id === farmerId);
+      showAlert(`Milk Collection Saved! Total: ₹${totalPay}`);
+      addLog(`Milk Entry: ${qty}L ${type} from ${farmer.name} (${farmerId})`);
+      sendRealSMS(farmer.mobile, `Sakevuru Milk (${date}): ${qty}L ${type} | FAT:${fat} SNF:${snf} | Amt: Rs.${totalPay}`);
+
+      document.getElementById('milk-form').reset();
+      document.getElementById('milk-date').value = getTodayString();
+      updateDashboardStats();
+    });
+
+    function toggleMachineReadMode() {
+      if (document.getElementById('milk-mode').value.includes('Automatic')) syncMachineData('all');
+    }
+
+    function syncMachineData(type) {
+      if(type === 'weight' || type === 'all') document.getElementById('milk-qty').value = (Math.random() * (15 - 2) + 2).toFixed(1);
+      if(type === 'fat' || type === 'all') {
+        document.getElementById('milk-fat').value = (Math.random() * (8 - 3.5) + 3.5).toFixed(1);
+        document.getElementById('milk-snf').value = (Math.random() * (9 - 8) + 8).toFixed(1);
+      }
+      addLog("Hardware Sync: Data received from machine");
+      showAlert("Hardware Machine Readings Synced!");
+    }
+
+    // --- Bill-Wise Period Deductions (10-Day / 15-Day Cycle Logic) ---
+    function updateBillCycleDates() {
+      const type = document.getElementById('deduction-cycle-type').value;
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = today.getDate();
+
+      let startDay, endDay;
+
+      if (type.includes('10-Day')) {
+        if (day <= 10) { startDay = '01'; endDay = '10'; }
+        else if (day <= 20) { startDay = '11'; endDay = '20'; }
+        else { startDay = '21'; endDay = String(new Date(year, today.getMonth() + 1, 0).getDate()); }
+      } else { // 15-Day Cycle
+        if (day <= 15) { startDay = '01'; endDay = '15'; }
+        else { startDay = '16'; endDay = String(new Date(year, today.getMonth() + 1, 0).getDate()); }
+      }
+
+      document.getElementById('deduction-start-date').value = `${year}-${month}-${startDay}`;
+      document.getElementById('deduction-end-date').value = `${year}-${month}-${endDay}`;
+    }
+
+    document.getElementById('deduction-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const cycleType = document.getElementById('deduction-cycle-type').value;
+      const startDate = document.getElementById('deduction-start-date').value;
+      const endDate = document.getElementById('deduction-end-date').value;
+      const farmerId = document.getElementById('deduction-farmer-id').value;
+      const type = document.getElementById('deduction-type').value;
+      const amount = parseFloat(document.getElementById('deduction-amount').value);
+
+      DB.deductions.push({ cycleType, startDate, endDate, farmerId, type, amount });
+
+      const farmer = DB.farmers.find(f => f.id === farmerId);
+      showAlert(`Bill Deduction (₹${amount}) applied for ${farmer.name} from ${startDate} to ${endDate}`);
+      addLog(`Bill Deduction Saved: ₹${amount} (${type}) for ${farmerId} [${startDate} to ${endDate}]`);
+      sendRealSMS(farmer.mobile, `Sakevuru Milk: Bill Deduction of Rs.${amount} (${type}) applied for period ${startDate} to ${endDate}.`);
+
+      document.getElementById('deduction-form').reset();
+      updateBillCycleDates();
+    });
+
+    // --- Clean Sheet Report Generation ---
+    function generateCleanSheetReport() {
+      const type = document.getElementById('report-type-select').value;
+      const start = document.getElementById('report-start-date').value;
+      const end = document.getElementById('report-end-date').value;
+      const shift = document.getElementById('report-shift').value;
+
+      document.getElementById('sheet-title').innerText = type.toUpperCase();
+      document.getElementById('sheet-from-date').innerText = start || 'ALL';
+      document.getElementById('sheet-to-date').innerText = end || 'ALL';
+
+      const contentDiv = document.getElementById('sheet-content-rows');
+      contentDiv.innerHTML = '';
+
+      if (type.includes('Shift') || type.includes('Bill Summary')) {
+        contentDiv.innerHTML = `
+          <div class="sheet-row sheet-row-header">
+            <span style="width:15%;">DATE</span>
+            <span style="width:12%;">SHIFT</span>
+            <span style="width:25%;">FARMER NAME</span>
+            <span style="width:18%;">PRODUCT</span>
+            <span style="width:15%;">QTY / FAT</span>
+            <span style="width:15%; text-align:right;">GROSS PAY (₹)</span>
+          </div>`;
+
+        let res = DB.collections.filter(r => (!start || r.date >= start) && (!end || r.date <= end) && (shift === 'All' || r.shift === shift));
+
+        if(res.length === 0) {
+          contentDiv.innerHTML += `<div class="sheet-row"><span style="width:100%; text-align:center;">No collections found for selected range.</span></div>`;
+        } else {
+          let grossTotal = 0;
+          res.forEach(r => {
+            const f = DB.farmers.find(farmer => farmer.id === r.farmerId);
+            grossTotal += parseFloat(r.totalPay);
+            contentDiv.innerHTML += `
+              <div class="sheet-row">
+                <span style="width:15%;">${r.date}</span>
+                <span style="width:12%;">${r.shift}</span>
+                <span style="width:25%;">${f ? f.name : r.farmerId}</span>
+                <span style="width:18%;">${r.type}</span>
+                <span style="width:15%;">${r.qty}L (${r.fat}%)</span>
+                <span style="width:15%; text-align:right;">₹${r.totalPay}</span>
+              </div>`;
+          });
+
+          // Calculate period deductions if Bill Summary selected
+          let totalDeducted = 0;
+          DB.deductions.forEach(d => {
+            if ((!start || d.startDate >= start) && (!end || d.endDate <= end)) {
+              totalDeducted += d.amount;
+            }
+          });
+
+          const netPayable = grossTotal - totalDeducted;
+
+          contentDiv.innerHTML += `
+            <div class="sheet-row" style="margin-top:15px; font-weight:bold; border-top:2px solid #1b4332;">
+              <span style="width:85%;">GROSS TOTAL COLLECTION AMOUNT</span>
+              <span style="width:15%; text-align:right;">₹${grossTotal.toFixed(2)}</span>
+            </div>
+            <div class="sheet-row" style="font-weight:bold; color:red;">
+              <span style="width:85%;">LESS: TOTAL BILL PERIOD DEDUCTIONS</span>
+              <span style="width:15%; text-align:right;">- ₹${totalDeducted.toFixed(2)}</span>
+            </div>
+            <div class="sheet-row" style="font-weight:bold; font-size:1.1em; color:green; border-top:1px solid #1b4332;">
+              <span style="width:85%;">NET PAYABLE TO FARMERS</span>
+              <span style="width:15%; text-align:right;">₹${netPayable.toFixed(2)}</span>
+            </div>`;
+        }
+      } else if (type.includes('Deduction Summary')) {
+        contentDiv.innerHTML = `
+          <div class="sheet-row sheet-row-header">
+            <span style="width:20%;">BILL CYCLE</span>
+            <span style="width:25%;">BILL DATES</span>
+            <span style="width:25%;">FARMER NAME</span>
+            <span style="width:15%;">DEDUCTION TYPE</span>
+            <span style="width:15%; text-align:right;">AMOUNT</span>
+          </div>`;
+
+        let res = DB.deductions.filter(d => (!start || d.startDate >= start) && (!end || d.endDate <= end));
+
+        if(res.length === 0) {
+          contentDiv.innerHTML += `<div class="sheet-row"><span style="width:100%; text-align:center;">No period deductions found for selected range.</span></div>`;
+        } else {
+          let totalDeductions = 0;
+          res.forEach(d => {
+            const f = DB.farmers.find(farmer => farmer.id === d.farmerId);
+            totalDeductions += d.amount;
+            contentDiv.innerHTML += `
+              <div class="sheet-row">
+                <span style="width:20%;">${d.cycleType}</span>
+                <span style="width:25%;">${d.startDate} to ${d.endDate}</span>
+                <span style="width:25%;">${f ? f.name : d.farmerId}</span>
+                <span style="width:15%;">${d.type}</span>
+                <span style="width:15%; text-align:right;">₹${d.amount}</span>
+              </div>`;
+          });
+
+          contentDiv.innerHTML += `
+            <div class="sheet-row" style="font-weight:bold; border-top:2px solid #333; margin-top:15px;">
+              <span style="width:85%;">TOTAL PERIOD DEDUCTIONS</span>
+              <span style="width:15%; text-align:right;">₹${totalDeductions.toFixed(2)}</span>
+            </div>`;
+        }
+      }
+
+      document.getElementById('sheet-output-card').classList.remove('hidden');
+      addLog(`Generated Clean Sheet Report: ${type}`);
+    }
+
+    // --- Analytics Charts ---
+    function renderCharts() {
+      const ctx1 = document.getElementById('milkTrendChart').getContext('2d');
+      const ctx2 = document.getElementById('milkTypeChart').getContext('2d');
+
+      const dateMap = {};
+      let cowTotal = 0, buffTotal = 0;
+
+      DB.collections.forEach(c => {
+        dateMap[c.date] = (dateMap[c.date] || 0) + c.qty;
+        if(c.type === 'Cow Milk') cowTotal += c.qty;
+        else buffTotal += c.qty;
+      });
+
+      const labels = Object.keys(dateMap).length ? Object.keys(dateMap) : [getTodayString()];
+      const dataPoints = Object.values(dateMap).length ? Object.values(dateMap) : [0];
+
+      if (milkTrendChartInstance) milkTrendChartInstance.destroy();
+      milkTrendChartInstance = new Chart(ctx1, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{ label: 'Milk Collected (L)', data: dataPoints, borderColor: '#ffb703', backgroundColor: 'rgba(255,183,3,0.2)', fill: true }]
+        }
+      });
+
+      if (milkTypeChartInstance) milkTypeChartInstance.destroy();
+      milkTypeChartInstance = new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+          labels: ['Cow Milk', 'Buffalo Milk'],
+          datasets: [{ data: [cowTotal, buffTotal], backgroundColor: ['#2d6a4f', '#40916c'] }]
+        }
+      });
+    }
+
+    function updateDashboardStats() {
+      const today = getTodayString();
+      const todayLiters = DB.collections.filter(c => c.date === today).reduce((sum, c) => sum + c.qty, 0);
+      document.getElementById('dash-milk-total').innerText = todayLiters.toFixed(1) + ' L';
+      renderCharts();
+    }
+
+    // --- Shortcut Listener (Ctrl + W + F) ---
+    document.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && (e.key === 'w' || e.key === 'W')) {
+        document.addEventListener('keydown', function secondKey(e2) {
+          if (e2.key === 'f' || e2.key === 'F') {
+            e2.preventDefault();
+            switchTab('collection');
+            document.getElementById('milk-farmer-id').focus();
+            showAlert("Shortcut Triggered: Direct Manual Collection", "info");
+          }
+          document.removeEventListener('keydown', secondKey);
+        }, { once: true });
+      }
+    });
+
+    // Default Dates
+    const todayStr = getTodayString();
+    document.getElementById('milk-date').value = todayStr;
+    document.getElementById('report-start-date').value = todayStr;
+    document.getElementById('report-end-date').value = todayStr;
+  </script>
 </body>
 </html>
